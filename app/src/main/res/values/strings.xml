@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">LiteLifes</string>
+    <string name="activity_atg">Empty Activity</string>
+    <string name="placeholder">[Placeholder]</string>
+    <string name="ageButton">Age</string>
+    <string name="historyButtonDescription">History</string>
+    <string name="placeholderButtonDescription">Placeholder</string>
+    <string name="settingsButtonDescription">Settings</string>
+    <string name="welcome">Welcome to LiteLifes!</string>
+</resources>
