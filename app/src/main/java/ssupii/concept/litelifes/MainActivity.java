@@ -1,7 +1,5 @@
 package ssupii.concept.litelifes;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,16 +10,31 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
+
 public class MainActivity extends AppCompatActivity {
 
     LinearLayout historyView;
     ScrollView historyScroll;
 
-    GameData gameData = new GameData();
+    GameData gameData;
 
+    Gson gson = new Gson();
+
+
+    //Activity states
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Restore game data when activity is restored
+        //TODO move to onResume
+        if(savedInstanceState != null){
+            gameData = gson.fromJson(savedInstanceState.getString("gameData"),GameData.class);
+        }else gameData = new GameData();
+
         setContentView(R.layout.activity_main);
         try
         {
@@ -34,23 +47,30 @@ public class MainActivity extends AppCompatActivity {
 
         historyView.addView(createTitleText("Year "+gameData.getGameYear()));
         historyView.addView(createEventMainText("You are "+gameData.getName()+", born in "+gameData.getCountryName()+"."));
+        //DEBUG
         historyView.addView(createEventDescriptionText("This is short."));
         historyView.addView(createEventDescriptionText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
     }
 
+    //TODO currently not working
+    @Override
+    public void onSaveInstanceState(Bundle outstate){
+        outstate.putString("gameData", gson.toJson(gameData));
+        super.onSaveInstanceState(outstate);
+    }
+
+
+    //Game elements
     public void onAgeButtonPressed(View view){
         gameData.nextYear();
 
         historyView.addView(createTitleText("Year "+gameData.getGameYear()+" - You are "+gameData.getAge()));
         historyView.addView(createPlaceholderEventMainText());
-        historyScroll.post(new Runnable() {
-            @Override
-            public void run() {
-                historyScroll.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
+        historyScroll.post(() -> historyScroll.fullScroll(ScrollView.FOCUS_DOWN));
     }
 
+
+    //Text handlers
     private TextView createTitleText(String text){
         TextView newEvent = createEventMainText(text);
         newEvent.setTypeface(Typeface.DEFAULT_BOLD);
